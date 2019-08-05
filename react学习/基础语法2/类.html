@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="app"></div>
+    <script type="text/babel">
+
+// function Person(name,age){
+//     this.name = name;
+//     this.age = age;
+// }
+
+// function Person(name,age){
+//     constructor(name,age){
+//         this.age = age;
+//         this.name = name;
+//     }
+// }
+// let person = new Person('gxy',20)
+// console.log(person)
+/*
+Person{name:'gxy',age:20}
+_proto_
+    constructor  ?????????
+*/
+
+class Person{
+    constructor(name,age){
+        // super();//?????????
+        this.age = age;
+        this.name = name;
+    }
+}
+class Haha extends Person{
+    constructor(name,age,xxx){
+        super();//?????????
+        this.age = age;
+        this.name = name;
+
+        this.xxx = 'xxx'
+    }
+    showName(){
+        console.log(this.name) //this?????
+    }
+}
+let haha = new Haha('gxy',20,9999)
+console.log(haha)
+/*
+Haha{age:20,name:'gxy',xxx:'xxx'} ????????????
+*/
+haha.showName(); //??????????????????
+    </script>
+</body>
+</html>

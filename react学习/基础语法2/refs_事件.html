@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://cdn.bootcss.com/prop-types/15.7.2/prop-types.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app"></div>
+    <script type="text/babel">
+        class App extends React.Component{
+        constructor(props){ //只会被调用1次
+            super(props)
+            console.log(this)//这里的this是实例
+            //统一在这里面修改this
+            //找到函数 用什么去强制绑定this call apply bind
+            //传参 call apply第二个参数为数组
+            //bind不会立即调用，其他两个会调用  传参形式与call一样
+            this.handlerClick = this.handlerClick.bind(this)
+        }
+        render(){
+            console.log(this) //内置方法的this指向实例对象
+            return(
+                <div>
+                    <input ref="msg" type="text"/>
+                    <button onClick={this.handlerClick}>提示输入数据</button>
+                    <input  onBlur = {this.handlerBlur} type="text" placeholder="失去焦点提示数据"/><hr/>
+                </div>
+            )
+        }
+        handlerBlur(event){
+            console.log(event.target.value)
+        }
+        handlerClick(){
+            console.log(this) //默认这里的this指向的是null,但可以在constructor中修改
+                             // 脚手架中支持箭头函数，这里不是很支持
+            console.log(this.refs.msg.value)
+
+        }
+    }
+
+    ReactDOM.render(<App/>,document.getElementById('app'))
+    </script>
+</body>
+
+</html>

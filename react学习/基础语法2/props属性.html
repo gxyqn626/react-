@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://cdn.bootcss.com/prop-types/15.7.2/prop-types.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script type="text/babel">
+
+    class Student extends React.Component{
+        render(){
+            console.log(this.props)
+            return(
+            <ul>
+                <li>{this.props.username}</li>
+                <li>{this.props.userage}</li>
+                <li>{this.props.sex}</li>
+            </ul>
+            )
+        }
+    }
+    // 设置默认porps属性
+    Student.defaultProps = {
+        sex:'女'
+    }
+    //设置props必要的数据类型
+    Student.propTypes = {
+        username:propTypes.string.isRequired,
+        age:propTypes.number.isRequired,
+    }
+    let person = {username:'gxy',userage:20}
+    ReactDOM.render(
+        <Student username={person.username} userage = {person.userage}/>
+      ,
+        document.getElementById('app')
+    )
+    </script>
+</body>
+</html>

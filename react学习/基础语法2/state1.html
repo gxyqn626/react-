@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://cdn.bootcss.com/prop-types/15.7.2/prop-types.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app"></div>
+    <script type="text/babel">
+        class Change extends React.Component{
+            constructor(props){
+                super(props)
+               this.state = {
+                   isLike:true
+               }
+               this.change = this.change.bind(this)
+            }
+            render(){
+                let {isLike} = this.state
+                console.log(this.state)
+                console.log(isLike)
+                let msg = isLike? '我过四级啦':'我木有过四级'
+                return(
+                <h1 onClick={this.change}>{msg}</h1>
+                )
+            }
+            change(){
+                // 修改状态
+                this.setState({
+                    isLike:!this.state.isLike
+                })
+            }
+        }
+        ReactDOM.render(<Change/>,document.getElementById('app'))
+    </script>
+</body>
+
+</html>
