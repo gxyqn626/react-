@@ -215,7 +215,7 @@ ReactDOM.render(
 
 方法写在原型上，用过new实例去调用这个方法,通过super()去继承父类的构造方法
 
-```
+```javascript
 class Person{
     constructor(name,age){
         // super();//调用父类的构造方法
@@ -253,7 +253,7 @@ haha.showName(); //减少复用，让所有的实例都可以去共享。
 >
 >作用：通过**标签属性**从组件外部向组件内部传递数据（只读）
 
-```
+```javascript
  // 设置默认porps属性
     Student.defaultProps = {
         sex:'女'
@@ -279,17 +279,23 @@ haha.showName(); //减少复用，让所有的实例都可以去共享。
 
 # 事件处理
 
+### constructor中绑定this
+
 > 使用的是自定义（合成）事件，不使用DOM事件
 >
 > 事件是通过委托的方式处理，即委托给最外层元素
 >
 > ```javascript
->   <button onClick={this.handlerClick}>提示输入数据</button>
+> <button onClick={this.handlerClick}>提示输入数据</button>
 > ```
 >
 > 函数不用加括号，必须用{}包起来，this.方法名。
 >
 > 自定义事件中的this默认指向Null，必须要在constructor中修改this的指向才能在自定义事件中使用。
+>
+> ```
+> this.handlerClick = this.handlerClick.bind(this)
+> ```
 
 ```javascript
       class App extends React.Component{
@@ -326,7 +332,81 @@ haha.showName(); //减少复用，让所有的实例都可以去共享。
     ReactDOM.render(<App/>,document.getElementById('app'))
 ```
 
+不能通过直接返回`false`方式阻止默认行为，必须要使用`preventDefault`
 
+如果不想使用`bind`绑定this值，还有两种方法。
+
+### 箭头函数
+
+```javascript
+class LoggingButton extends React.Component{
+        constructor(props){
+            super(props)
+            this.state = {
+                isToggleOn:true
+            }
+        }
+        handleClick = ()=>{
+            console.log('2')
+            console.log(this)
+        }
+        render(){
+            return(
+                <button onClick={this.handleClick}>
+                    Click me!    
+                </button>
+            )
+        }
+    }
+```
+
+### 直接在回调中使用
+
+```javascript
+    handleClick(){
+            console.log('2')
+            console.log(this)
+        }
+        render(){
+            return(
+                <button onClick={(e)=>this.handleClick(e)}>
+                    Click me!    
+                </button>
+            )
+        }
+```
+
+### 在事件中传参并传this
+
+- 方式一：e 显示传递
+
+```
+ <button onClick={(e)=>this.handleClick(3,e)}>
+      Click me!    
+ </button>
+ handleClick(id,e){
+	console.log(this)
+	console.log(e)
+	console.log(id)
+        }
+```
+
+![1565094760279](C:\Users\青柠\AppData\Roaming\Typora\typora-user-images\1565094760279.png)
+
+- 方式二：event 隐式传递
+
+```
+ <button onClick={this.handleClick.bind(this,3)}>
+        Click me!    
+ </button>
+handleClick(id){
+           console.log(id)
+           console.log(this)
+           console.log(event)
+        }
+```
+
+![1565094997623](C:\Users\青柠\AppData\Roaming\Typora\typora-user-images\1565094997623.png)
 
 # state
 
@@ -437,10 +517,6 @@ devServer:{
 }
 ```
 
-
-
-
-
 ```
 npm install -g create-react-app
 create-react-app my-app
@@ -449,4 +525,6 @@ npm start
 ```
 
 
+
+# 条件渲染
 
