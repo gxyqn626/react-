@@ -528,3 +528,203 @@ npm start
 
 # 条件渲染
 
+# 组件通信方式
+
+- 方式一: 通过props传递
+
+  - 共同的数据放在父组件上, 特有的数据放在自己组件内部(state)
+  - 通过props可以传递一般数据和函数数据, 只能一层一层传递
+  - 一般数据-->父组件传递数据给子组件-->子组件读取数据
+  - 函数数据-->子组件传递数据给父组件-->子组件调用函数
+
+- 方式二: 使用消息订阅(subscribe)-发布(publish)机制: 自定义事件机制
+
+  <https://github.com/mroderick/PubSubJS>
+
+  - 工具库: PubSubJS
+
+  - 下载: npm install pubsub-js --save
+
+  - 使用: 
+
+    import PubSub from 'pubsub-js' //引入
+
+    PubSub.subscribe('delete', function(msg,data){ }); //订阅
+
+    PubSub.publish('delete', data) //发布消息
+
+  #  评论删除项目分析
+```
+npm install -g create-react-app
+create-react-app my-app
+cd my-app
+npm start
+```
+留下/src下的index.js和index.css
+index.js为入口文件
+index.css为全局的css
+```
+在index.js中，我们把components/App/app作为入口组件
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './components/App/app'
+import './index.css'
+ReactDOM.render(<App/>,document.getElementById('root'))
+```
+app.vue作为入口组件，可以在里面引入其他的组件。
+
+![1565403595724](C:\Users\青柠\AppData\Roaming\Typora\typora-user-images\1565403595724.png)
+
+```
+//app.js结构
+class App extends React.Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            //放置数据
+            comments:{
+                 {username:'众人',comments:'太好看了吧!'},
+            }
+        }
+    }
+    
+    render(){
+        return(
+        <div>
+        //放置虚拟DOM结构 
+        //1、请发表对React的评论
+        //2、引入左边组件和右边组件
+        //涉及组件的传值，首先就是comment数据
+        <Add/>
+        <List comments={comments} /> //需要给List传递评论的内容，通过标签传值
+        </div>
+        )
+    }
+}
+export default App
+```
+
+
+
+list.js
+
+![1565404025055](C:\Users\青柠\AppData\Roaming\Typora\typora-user-images\1565404025055.png)
+
+List中又包含了item组件，并且这个item组件是循环生成的。
+
+comments值的传递：app.js--->list.js---->item.js
+
+```javascript
+//list.js
+import React from 'react'
+import Item from '../Item/item'
+class List from React.Component{
+    render(){
+        let {comments} = this.props ------------>获取app.js传递的值
+        return(
+        <ul>
+        	{
+                comments.map((item,index)=>{
+                    return <Item key={index} comment={item} index={index} /> ---->把单个的comment传递给Item组件
+                })
+        	}
+        </ul>
+        )
+    }
+}
+```
+
+item.js接收到list.js给他们的值后，开始渲染。
+
+```
+//item.js
+import React from 'react'
+class Item extends React.Component{
+    
+    render(){
+        let {comment} = this.props;  //接收到list.js传递过来的值
+        return(
+        	<li>
+        		<p>{comment.username}说{comment.comments}</p>
+        		<button>删除</button>
+        	</li>
+        )
+    }
+}
+```
+
+
+
+当添加评论时，在add.js中添加
+
+```
+//add.js
+addComment = ()=>{
+        // 将数据传到 app.js中的comments
+          // 内层组件交给外层
+        this.props.add(obj)  
+    }
+<button onClick={this.addComment}>提交</button>
+```
+
+而外层组件如果想要接收到内层组件传递的值，通过this.props.add(obj) 这是在外层组件定义的方法名add。然后传递过去的值obj在外层组件的方法中接收
+
+```
+//app.js
+add = (comment)=>{
+      let {comments} = this.state
+      comments.unshift(comment)
+      this.setState({comments}) //更新一下状态
+  }
+<Add add = {this.add}/>
+```
+
+
+
+删除评论也是同理
+
+在Item组件上删除评论 ，需要把index值先传递给List组件，然后List组件再把值传递给App组件，最后在App组件上删除。
+
+```javascript
+//item.js
+ delComment = ()=>{
+            this.props.del(this.props.index)
+     
+    }
+ <button  onClick={this.delComment} >删除</button>
+ 
+//list.js
+<Item key={index} comment={item} index={index} del={this.props.del} />
+
+//App.js
+del = (index)=>{
+    //删除
+}
+<List comments={comments} del={this.del}/>
+```
+
+**综上：父组件向子组件传值**
+
+```
+父：
+<Children content={item}/>
+子：
+<div>{this.props.content}</div>
+```
+
+**子组件向父组件传值**
+
+```
+父：
+chuan(data){
+    console.log(data) //123123
+}
+<Children chuan = {this.chuanzhi} />
+
+子:
+solve(){
+    this.props.chuan('123123')
+}
+<div onClick={this.solve}></div>
+```
+
